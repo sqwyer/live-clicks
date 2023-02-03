@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clicks?!</title>
+
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        button {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            position: absolute;
+            font-size: 1.25rem;
+            padding: 1rem;
+        }
+        p {
+            bottom: 1%;
+            left: 50%;
+            transform: translate(-50%,0);
+            position: absolute;
+            color: rgb(181, 183, 192)
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <button id="btn">0</button>
+        <p><span id="connections">1 person</span> clicking right now</p>
+    </main>
+    <script>
+        const ws = new WebSocket(`ws://${window.location.host}/ws`);
+        const btn = document.getElementById('btn');
+        const conns = document.getElementById('connections');
+
+        async function init() {
+            await fetch('/api/get')
+                .then(res => res.json())
+                .then(json => {
+                    btn.innerText = json.clicks
+                })
+                .catch(err => console.error);
+        }
+
+        init();
+
+        btn.onclick = () => {
+            ws.send('click');
+        }
+
+        ws.onmessage = (event) => {
+            let json = JSON.parse(event.data);
+            if(json.type == "connections") {
+                if(json.connections == 1) conns.innerText = json.connections + ' person'
+                else conns.innerText = json.connections + ' people'
+            }
+            if(json.type == "clicks") btn.innerText = json.clicks
+        }
+    </script>
+</body>
+</html>
