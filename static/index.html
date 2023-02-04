@@ -1,58 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <title>Live Clicks</title>
-    <link rel="stylesheet" href="./index.css">
-</head>
-<body id="root">
-    <main>
-        <a id="theme" onclick="toggleTheme()"><img src="./moon.svg"/></a>
-        <button id="btn">0</button>
-        <p><span id="connections">1 person</span> clicking right now</p>
-    </main>
-    <script>
-        const ws = new WebSocket(`ws://${window.location.host}/ws`);
-        const btn = document.getElementById('btn');
-        const themebtn = document.getElementById('theme');
-        const conns = document.getElementById('connections');
-        const root = document.getElementById('root');
-        let dark = (localStorage.getItem('dark') == 'true') || false;
-        if(dark) {
-            themebtn.children[0].setAttribute('src', './sun.svg');
-            root.classList.add('dark')
-        }
-        function toggleTheme() {
-            dark = !dark;
-            localStorage.setItem('dark', dark)
-            if(dark) {
-                themebtn.children[0].setAttribute('src', './sun.svg');
-                root.classList.add('dark')
-            }
-            else {
-                themebtn.children[0].setAttribute('src', './moon.svg');
-                root.classList.remove('dark')
-            }
-        }
-        async function init() {
-            await fetch('/api/get')
-                .then(res => res.json())
-                .then(json => {
-                    btn.innerText = json.clicks
-                })
-                .catch(err => console.error);
-        }
-        init();
-        btn.onclick = () => {
-            ws.send('click');
-        }
-        ws.onmessage = (event) => {
-            let json = JSON.parse(event.data);
-            if(json.type == "connections") {
-                if(json.connections == 1) conns.innerText = json.connections + ' person'
-                else conns.innerText = json.connections + ' people'
-            }
-            if(json.type == "clicks") btn.innerText = json.clicks
-        }
-    </script>
-</body>
+	<head>
+		<title>Live Clicks</title>
+		<link rel="stylesheet" href="./index.css" />
+	</head>
+	<body id="root">
+		<main>
+			<a id="theme" onclick="toggleTheme()"><img src="./moon.svg" /></a>
+			<button id="btn">0</button>
+			<p><span id="connections">1 person</span> clicking right now</p>
+		</main>
+		<script>
+			const ws = new WebSocket(`ws://${window.location.host}/ws`);
+			const btn = document.getElementById("btn");
+			const themebtn = document.getElementById("theme");
+			const conns = document.getElementById("connections");
+			const root = document.getElementById("root");
+			let dark = localStorage.getItem("dark") == "true" || false;
+			if (dark) {
+				themebtn.children[0].setAttribute("src", "./sun.svg");
+				root.classList.add("dark");
+			}
+			function toggleTheme() {
+				dark = !dark;
+				localStorage.setItem("dark", dark);
+				if (dark) {
+					themebtn.children[0].setAttribute("src", "./sun.svg");
+					root.classList.add("dark");
+				} else {
+					themebtn.children[0].setAttribute("src", "./moon.svg");
+					root.classList.remove("dark");
+				}
+			}
+			async function init() {
+				await fetch("/api/get")
+					.then((res) => res.json())
+					.then((json) => {
+						btn.innerText = json.clicks;
+					})
+					.catch((err) => console.error);
+			}
+			init();
+			btn.onclick = () => {
+				ws.send("click");
+			};
+			ws.onmessage = (event) => {
+				let json = JSON.parse(event.data);
+				if (json.type == "connections") {
+					if (json.connections == 1)
+						conns.innerText = json.connections + " person";
+					else conns.innerText = json.connections + " people";
+				}
+				if (json.type == "clicks") btn.innerText = json.clicks;
+			};
+		</script>
+	</body>
 </html>
