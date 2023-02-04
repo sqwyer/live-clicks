@@ -1,22 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Clicks</title>
     <link rel="stylesheet" href="./index.css">
 </head>
-<body>
+<body id="root">
     <main>
+        <a id="theme" onclick="toggleTheme()"><img src="./moon.svg"/></a>
         <button id="btn">0</button>
         <p><span id="connections">1 person</span> clicking right now</p>
     </main>
     <script>
         const ws = new WebSocket(`ws://${window.location.host}/ws`);
         const btn = document.getElementById('btn');
+        const themebtn = document.getElementById('theme');
         const conns = document.getElementById('connections');
-
+        const root = document.getElementById('root');
+        let dark = (localStorage.getItem('dark') == 'true') || false;
+        if(dark) {
+            themebtn.children[0].setAttribute('src', './sun.svg');
+            root.classList.add('dark')
+        }
+        function toggleTheme() {
+            dark = !dark;
+            localStorage.setItem('dark', dark)
+            if(dark) {
+                themebtn.children[0].setAttribute('src', './sun.svg');
+                root.classList.add('dark')
+            }
+            else {
+                themebtn.children[0].setAttribute('src', './moon.svg');
+                root.classList.remove('dark')
+            }
+        }
         async function init() {
             await fetch('/api/get')
                 .then(res => res.json())
@@ -25,13 +41,10 @@
                 })
                 .catch(err => console.error);
         }
-
         init();
-
         btn.onclick = () => {
             ws.send('click');
         }
-
         ws.onmessage = (event) => {
             let json = JSON.parse(event.data);
             if(json.type == "connections") {

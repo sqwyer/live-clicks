@@ -1,18 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&family=Roboto:ital,wght@0,400;0,500;0,700;0,900;1,400;1,500;1,700;1,900&display=swap');
 body {
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
+}
+body.dark {
+    background: rgb(17, 17, 17);
 }
 button {
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);
-    position: absolute;
-    font-size: 1.25rem;
     padding: 1rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: rgb(145, 147, 154);
+}
+button, #theme {
+    position: absolute;
+    background: transparent;
+    border: 1.5px solid rgb(181, 183, 192);
+    border-radius: 8px;
+    cursor: pointer;
+}
+body.dark button, body.dark #theme{
+    border: 1.5px solid rgb(44, 45, 47);
+    color: rgb(59, 61, 64);
+}
+body.dark #theme img {
+    filter: invert(23%) sepia(7%) saturate(322%) hue-rotate(177deg) brightness(95%) contrast(93%);
+}
+#theme {
+    padding: .5rem;
+    display: inline-flex;
+    align-items: center;
+    top: 1%;
+    right: 1%;
+    position: absolute;
 }
 p {
     bottom: 1%;
     left: 50%;
     transform: translate(-50%,0);
     position: absolute;
-    color: rgb(181, 183, 192)
+    color: rgb(181, 183, 192);
+    font-weight: 600;
+}
+body.dark p {
+    color: rgb(59, 61, 64);
 }
