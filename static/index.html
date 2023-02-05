@@ -12,7 +12,11 @@
 			<p><span id="connections">1 person</span> clicking right now</p>
 		</main>
 		<script>
-			const ws = new WebSocket(`ws://${window.location.host}/ws`);
+			const ws = new WebSocket(
+				`ws${location.protocol === "https:" ? "s" : ""}://${
+					window.location.host
+				}/ws`
+			);
 			const btn = document.getElementById("btn");
 			const themebtn = document.getElementById("theme");
 			const conns = document.getElementById("connections");
