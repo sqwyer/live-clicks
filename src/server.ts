@@ -2,8 +2,20 @@ import expressWs from "express-ws";
 import { readFileSync, writeFileSync } from "fs";
 import * as express from "express";
 import { createWsRouter } from "./ws";
+import { createServer } from "https";
 
-const { app, getWss } = expressWs(express.default());
+const ex = express.default();
+let server: any = undefined;
+if (process.env.NODE_ENV == "production") {
+	server = createServer(
+		{
+			key: readFileSync("key.pem"),
+			cert: readFileSync("cert.pem"),
+		},
+		ex
+	);
+}
+const { app, getWss } = expressWs(ex, server);
 const PORT = process.env.PORT || 3000;
 
 async function init() {
@@ -31,6 +43,12 @@ app.get("/api/get", async (_req, res) => {
 	}
 });
 
-app.listen(PORT, () => {
-	console.log("🏃 Server running on PORT " + PORT);
-});
+if (process.env.NODE_ENV == "production") {
+	server.listen(PORT, () => {
+		console.log("🏃 Server running on PORT " + PORT);
+	});
+} else {
+	app.listen(PORT, () => {
+		console.log("🏃 Server running on PORT " + PORT);
+	});
+}
